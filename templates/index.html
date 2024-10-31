@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pagetitle }}</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body {
+            background-color: #f1f1f1;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .table-container, .form-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex: 1; /* Allow the containers to grow equally */
+            margin: 0 10px; /* Add horizontal spacing */
+        }
+        .form-container {
+            margin-right: 20px; /* Adjust margin for form container */
+        }
+        .table-container {
+            margin-left: 20px; /* Adjust margin for table container */
+        }
+        .w3-button {
+            margin-top: 10px;
+        }
+        .reset-button {
+            background-color: #f44336; /* Red background for reset */
+            color: white; /* White text color */
+        }
+    </style>
+    <script>
+        function confirmReset() {
+            return confirm("Are you sure you want to reset all contributions to zero?");
+        }
+    </script>
+</head>
+<body class="w3-container">
+
+    <h1 class="w3-center">Funds Tracker</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="w3-ul">
+                {% for category, message in messages %}
+                    <li class="w3-panel {{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Top Section: Add Contribution and Overall Total Contributions -->
+    <div class="container">
+        <div class="form-container">
+            <h2>Add Contribution</h2>
+            <form action="/add" method="post">
+                <label for="friend_name">Member:</label>
+                <select name="friend_name" class="w3-select" required>
+                    <option value="Haly">Haly</option>
+                    <option value="Gwyna">Gwyna</option>
+                    <option value="Rachelle Ann">Rachelle Ann</option>
+                    <option value="Alexes">Alexes</option>
+                </select>
+                <label for="amount">Amount:</label>
+                <input type="number" name="amount" step="0.01" class="w3-input" required>
+                <button type="submit" class="w3-button w3-blue">Add Contribution</button>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h2>Overall Total Contributions</h2>
+            <p><strong>Total:</strong> {{ overall_total }}</p>
+            <form action="/reset" method="post" onsubmit="return confirmReset();">
+                <button type="submit" class="w3-button reset-button">Reset Total Contributions</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Section: Contributions by Date and Total Contributions by Friend -->
+    <div class="container">
+        <div class="table-container">
+            <h2>Contributions by Date</h2>
+            <table class="w3-table w3-bordered">
+                <tr>
+                    <th>Date</th>
+                    <th>Total Amount</th>
+                </tr>
+                {% for record in contributions_by_date %}
+                <tr>
+                    <td><a href="/date/{{ record['date'] }}">{{ record['date'] }}</a></td>
+                    <td>{{ record['total_amount'] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="table-container">
+            <h2>Total Contributions by Member</h2>
+            <table class="w3-table w3-bordered">
+                <tr>
+                    <th>Member</th>
+                    <th>Total Contributed</th>
+                </tr>
+                {% for record in total_per_friend %}
+                <tr>
+                    <td>{{ record['name'] }}</td>
+                    <td>{{ record['total_contributed'] | default(0) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>

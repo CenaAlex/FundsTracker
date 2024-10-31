@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributions on {{ date }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            display: inline;  /* Make the form inline to keep buttons in one row */
+        }
+    </style>
+</head>
+<body>
+    <h1>Contributions on {{ date }}</h1>
+
+	<table>
+		<tr>
+			<th>Member</th>
+			<th>Amount</th>
+			<th>Actions</th>  <!-- New column for actions -->
+		</tr>
+		{% for record in contributions %}
+		<tr>
+			<td>{{ record['name'] }}</td>
+			<td>{{ record['amount'] }}</td>
+			<td>
+				<form action="{{ url_for('delete_contribution', contribution_id=record.id) }}" method="POST" style="display: inline;">
+					<button type="submit" onclick="return confirm('Are you sure you want to delete this contribution?');">Delete</button>
+				</form>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+
+
+    <a href="/">Back to Fund Tracker</a>
+</body>
+</html>
